@@ -3,7 +3,7 @@ FROM linuxserver/sabnzbd as builder
 RUN \
  echo "**** install packages ****" && \
  apt update && \
- apt install -y curl unzip openvpn && \
+ apt install -y curl unzip && \
  echo "**** grab privado configs ****" && \
  mkdir -p /defaults/ && \
  curl -o \
@@ -15,6 +15,6 @@ RUN \
 
 FROM linuxserver/sabnzbd
 
+RUN apt install -y openvpn
 COPY --from=builder /defaults /defaults
-
 COPY root/ /
