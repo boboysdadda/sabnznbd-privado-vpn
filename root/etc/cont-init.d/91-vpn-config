@@ -1,0 +1,32 @@
+#!/usr/bin/with-contenv bash
+
+# Env variable validation
+VARS=( \
+PRIVADOUSER \
+PRIVADOPASS \
+PRIVADOENDPOINT
+)
+
+# Determine if setup is needed
+if [ ! -f /usr/sbin/openvpn ] && [ -f /usr/bin/apt ]; then
+  ## Ubuntu
+  apt update
+  apt install -y \
+    openvpn
+fi
+if [ ! -f /usr/sbin/openvpn ] && [ -f /sbin/apk ]; then
+  # Alpine
+  apk add --no-cache \
+    openvpn
+fi
+
+# create tun device
+if [ ! -c /dev/net/tun ]; then
+  mkdir -p /dev/net
+  mknod /dev/net/tun c 10 200
+fi
+
+# make auth file from env
+echo "${PRIVADOUSER}" > /auth.txt
+echo "${PRIVADOPASS}" >> /auth.txt
+chmod 600 /auth.txt
